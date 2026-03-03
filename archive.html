@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আর্কাইভস - ভাড়া তালিকা ও সম্পদ - SafeRideBD</title>
+    <link href="https://banglawebfonts.pages.dev/css/bornomala.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0c0f;
+            --bg-secondary: #14181c;
+            --bg-card: #1e2429;
+            --bg-hover: #2a323a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8c2;
+            --text-muted: #8a929c;
+            --accent-primary: #ff6b4a;
+            --accent-secondary: #4ade80;
+            --accent-warning: #fbbf24;
+            --accent-danger: #ef4444;
+            --border-color: #2e3a44;
+            --border-light: #3a4754;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'Bornomala', serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-warning));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 40px;
+            flex: 1;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+            transform: translateX(-5px);
+        }
+
+        .resources-section {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .section-title i {
+            color: var(--accent-primary);
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .resource-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow);
+        }
+
+        .resource-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-warning));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .resource-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .resource-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background-color: var(--bg-hover);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .download-link:hover {
+            background-color: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .fare-preview-section {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .fare-table-container {
+            overflow-x: auto;
+            margin: 25px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .fare-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .fare-table th {
+            background-color: var(--accent-primary);
+            color: white;
+            padding: 14px 12px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .fare-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .fare-table tr:nth-child(even) {
+            background-color: var(--bg-secondary);
+        }
+
+        .fare-table tr:hover td {
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 10px 0;
+        }
+
+        .badge i {
+            color: var(--accent-secondary);
+            margin-right: 6px;
+        }
+
+        .info-box {
+            background-color: var(--bg-secondary);
+            border-left: 4px solid var(--accent-info, #3b82f6);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .info-box-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .info-box-title i {
+            color: var(--accent-info, #3b82f6);
+        }
+
+        .info-box p {
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .tech-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tech-item {
+            background-color: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tech-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 107, 74, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-primary);
+            font-size: 18px;
+        }
+
+        .tech-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tech-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .methodology-note {
+            background-color: rgba(74, 222, 128, 0.1);
+            border-left: 4px solid var(--accent-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .footer {
+            background-color: var(--bg-secondary);
+            border-top: 2px solid var(--border-color);
+            padding: 48px 24px 32px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .footer-logo img {
+            height: 80px;
+            width: auto;
+            opacity: 1;
+        }
+
+        .footer-logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .footer-tagline {
+            color: var(--text-muted);
+            font-size: 15px;
+            max-width: 500px;
+            line-height: 1.8;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px 24px;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .footer-link:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-hover);
+        }
+
+        .footer-link i {
+            margin-right: 6px;
+            color: var(--accent-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            background-color: var(--bg-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+        }
+
+        .social-link:hover {
+            background-color: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        .emergency-note {
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .emergency-note i {
+            color: var(--accent-danger);
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .tech-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1 class="page-title">আর্কাইভস ও সম্পদ</h1>
+        <p class="page-subtitle">সরকারি ভাড়া তালিকা, ডকুমেন্টেশন ও প্রযুক্তিগত সম্পদ</p>
+    </div>
+
+    <div class="container">
+        <a href="index.php" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            হোম পৃষ্ঠায় ফিরে যান
+        </a>
+
+        <!-- Resources Section -->
+        <div class="resources-section">
+            <h2 class="section-title">
+                <i class="fas fa-book-open"></i>
+                ভাড়া ক্যালকুলেটর উন্নয়নের সম্পদ
+            </h2>
+            
+            <p style="color: var(--text-muted); margin-bottom: 25px;">
+                SafeRideBD-এর ভাড়া ক্যালকুলেটর উন্নয়নে ব্যবহৃত সরকারি নথি ও সম্পদ। এই ডকুমেন্টসমূহ বাংলাদেশ সড়ক পরিবহন কর্তৃপক্ষ (BRTA) কর্তৃক প্রকাশিত এবং অনুমোদিত ভাড়া চার্ট ও নির্দেশিকা অনুসরণ করে তৈরি করা হয়েছে।
+            </p>
+
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="resource-title">ভাড়া তালিকা - অংশ ১</h3>
+                    <p class="resource-desc">ঢাকা শহরের অভ্যন্তরীণ বাস রুটের ভাড়া চার্ট (সিটি সার্ভিস)</p>
+                    <a href="part1.pdf" class="download-link" download>
+                        <i class="fas fa-download"></i> ডাউনলোড PDF
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="resource-title">ভাড়া তালিকা - অংশ ২</h3>
+                    <p class="resource-desc">ঢাকা শহরতলি ও নিকটবর্তী এলাকার বাস রুটের ভাড়া চার্ট</p>
+                    <a href="part2.pdf" class="download-link" download>
+                        <i class="fas fa-download"></i> ডাউনলোড PDF
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="resource-title">ভাড়া তালিকা - অংশ ৩</h3>
+                    <p class="resource-desc">দূরপাল্লার বাস রুটের ভাড়া চার্ট ও নির্দেশিকা</p>
+                    <a href="part3.pdf" class="download-link" download>
+                        <i class="fas fa-download"></i> ডাউনলোড PDF
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="resource-title">ভাড়া তালিকা - অংশ ৪</h3>
+                    <p class="resource-desc">ছাত্র ভাড়া ও বিশেষ ছাড় সংক্রান্ত BRTA নির্দেশিকা</p>
+                    <a href="part4.pdf" class="download-link" download>
+                        <i class="fas fa-download"></i> ডাউনলোড PDF
+                    </a>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 class="resource-title">ভাড়া তালিকা - অংশ ৫</h3>
+                    <p class="resource-desc">অপারেটিং বাস ও রুট পারমিট সংক্রান্ত তথ্য</p>
+                    <a href="part5.pdf" class="download-link" download>
+                        <i class="fas fa-download"></i> ডাউনলোড PDF
+                    </a>
+                </div>
+            </div>
+
+            <div class="badge">
+                <i class="fas fa-check-circle"></i> মোট ৫টি PDF ডকুমেন্ট | সর্বশেষ আপডেট: ফেব্রুয়ারি ২০২৬
+            </div>
+        </div>
+
+        <!-- Fare Chart Preview Section -->
+        <div class="fare-preview-section">
+            <h2 class="section-title">
+                <i class="fas fa-table"></i>
+                সরকারি ভাড়া চার্টের প্রাকদর্শন
+            </h2>
+            
+            <p style="color: var(--text-muted); margin-bottom: 20px;">
+                নিচে ঢাকা শহরের কিছু গুরুত্বপূর্ণ বাস রুটের ভাড়া তালিকার নমুনা দেওয়া হল। সম্পূর্ণ তালিকা জন্য উপরের PDF ডকুমেন্ট ডাউনলোড করুন।
+            </p>
+
+            <div class="fare-table-container">
+                <table class="fare-table">
+                    <thead>
+                        <tr>
+                            <th>যাত্রা শুরু</th>
+                            <th>গন্তব্য</th>
+                            <th>সাধারণ ভাড়া (টাকা)</th>
+                            <th>ছাত্র ভাড়া (টাকা)</th>
+                            <th>দূরত্ব (কিমি)</th>
+                            <th>পরিচালনাকারী বাস</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>মোহাখালী</td>
+                            <td>ফার্মগেট</td>
+                            <td>২০</td>
+                            <td>১০</td>
+                            <td>৫.২</td>
+                            <td>BRTC, হানিফ</td>
+                        </tr>
+                        <tr>
+                            <td>ফার্মগেট</td>
+                            <td>শাহবাগ</td>
+                            <td>১৫</td>
+                            <td>১০</td>
+                            <td>৩.৮</td>
+                            <td>BRTC, হানিফ, শিখর</td>
+                        </tr>
+                        <tr>
+                            <td>শাহবাগ</td>
+                            <td>মতিঝিল</td>
+                            <td>১০</td>
+                            <td>১০</td>
+                            <td>২.৫</td>
+                            <td>BRTC, শ্যামলী</td>
+                        </tr>
+                        <tr>
+                            <td>মিরপুর-১২</td>
+                            <td>গাবতলী</td>
+                            <td>১৫</td>
+                            <td>১০</td>
+                            <td>৪.১</td>
+                            <td>বিসিক, তুহিন</td>
+                        </tr>
+                        <tr>
+                            <td>গাবতলী</td>
+                            <td>সায়েন্স ল্যাব</td>
+                            <td>২০</td>
+                            <td>১০</td>
+                            <td>৬.৩</td>
+                            <td>রয়েল, সিটি</td>
+                        </tr>
+                        <tr>
+                            <td>উত্তরা</td>
+                            <td>এয়ারপোর্ট</td>
+                            <td>১০</td>
+                            <td>১০</td>
+                            <td>২.১</td>
+                            <td>BRTC, আকাশ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <div class="info-box-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>ছাত্র ভাড়া সংক্রান্ত তথ্য</span>
+                </div>
+                <p>
+                    BRTA নির্দেশিকা অনুযায়ী, ছাত্রছাত্রীদের জন্য নিয়মিত ভাড়ার উপর ৫০% ছাড় প্রদান করা হয়। তবে ন্যূনতম ভাড়া ১০ টাকা নির্ধারণ করা হয়েছে। ছাত্র ভাড়া পেতে হলে বৈধ ছাত্র আইডি কার্ড প্রদর্শন বাধ্যতামূলক।
+                </p>
+            </div>
+        </div>
+
+        <!-- Technology & Methodology Section -->
+        <div class="resources-section">
+            <h2 class="section-title">
+                <i class="fas fa-cogs"></i>
+                ভাড়া ক্যালকুলেটর: প্রযুক্তি ও পদ্ধতি
+            </h2>
+
+            <div class="methodology-note">
+                <p style="color: var(--text-primary); font-size: 16px; line-height: 1.8;">
+                    SafeRideBD-এর ভাড়া ক্যালকুলেটর BRTA অনুমোদিত ভাড়া চার্টের উপর ভিত্তি করে তৈরি। সঠিক ভাড়া প্রদান এবং অতিরিক্ত ভাড়া আদায় প্রতিরোধে এই ক্যালকুলেটর কাজ করে। নিম্নে এর উন্নয়নে ব্যবহৃত প্রযুক্তি ও পদ্ধতি উল্লেখ করা হল।
+                </p>
+            </div>
+
+            <div class="tech-list">
+                <div class="tech-item">
+                    <div class="tech-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div>
+                        <div class="tech-name">MySQL ডেটাবেস</div>
+                        <div class="tech-desc">ভাড়া চার্ট সংরক্ষণ ও পরিচালনা</div>
+                    </div>
+                </div>
+                
+                <div class="tech-item">
+                    <div class="tech-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div>
+                        <div class="tech-name">PHP ব্যাকএন্ড</div>
+                        <div class="tech-desc">ভাড়া গণনা ও রুট অনুসন্ধান অ্যালগরিদম</div>
+                    </div>
+                </div>
+                
+                <div class="tech-item">
+                    <div class="tech-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <div>
+                        <div class="tech-name">BFS অ্যালগরিদম</div>
+                        <div class="tech-desc">মাল্টি-সেগমেন্ট রুট অনুসন্ধান</div>
+                    </div>
+                </div>
+                
+                <div class="tech-item">
+                    <div class="tech-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div>
+                        <div class="tech-name">অটো-সাজেশন</div>
+                        <div class="tech-desc">লোকেশন টাইপহেড ও ফিল্টারিং</div>
+                    </div>
+                </div>
+                
+                <div class="tech-item">
+                    <div class="tech-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="tech-name">ছাত্র ভাড়া</div>
+                        <div class="tech-desc">৫০% ছাড় ও ন্যূনতম ১০ টাকা নিশ্চিতকরণ</div>
+                    </div>
+                </div>
+                
+                <div class="tech-item">
+                    <div class="tech-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <div class="tech-name">ডেটাবেস ইন্ডেক্সিং</div>
+                        <div class="tech-desc">দ্রুত কোয়েরি নির্বাহের জন্য অপ্টিমাইজেশন</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="color: var(--text-primary); font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-calculator" style="color: var(--accent-primary);"></i>
+                    ভাড়া গণনা পদ্ধতি
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="background-color: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size: 14px; color: var(--accent-primary); margin-bottom: 10px;">ধাপ ১</div>
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px;">সরাসরি রুট অনুসন্ধান</div>
+                        <div style="color: var(--text-muted); font-size: 13px;">ডেটাবেসে সরাসরি from-to মিলিয়ে অনুসন্ধান</div>
+                    </div>
+                    
+                    <div style="background-color: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size: 14px; color: var(--accent-primary); margin-bottom: 10px;">ধাপ ২</div>
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px;">সংযোগকারী রুট অনুসন্ধান</div>
+                        <div style="color: var(--text-muted); font-size: 13px;">BFS অ্যালগরিদম ব্যবহার করে মাল্টি-সেগমেন্ট রুট খুঁজে বের করা</div>
+                    </div>
+                    
+                    <div style="background-color: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size: 14px; color: var(--accent-primary); margin-bottom: 10px;">ধাপ ৩</div>
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px;">ভাড়া গণনা</div>
+                        <div style="color: var(--text-muted); font-size: 13px;">সাধারণ ভাড়া + ছাত্র ভাড়া (৫০% ছাড়) + সর্বনিম্ন ১০ টাকা নিশ্চিতকরণ</div>
+                    </div>
+                    
+                    <div style="background-color: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div style="font-size: 14px; color: var(--accent-primary); margin-bottom: 10px;">ধাপ ৪</div>
+                        <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px;">রুট ভিজুয়ালাইজেশন</div>
+                        <div style="color: var(--text-muted); font-size: 13px;">সেগমেন্ট অনুযায়ী পথ দেখানো ও বাস বদলের নির্দেশনা</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; background-color: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                <div style="display: flex; gap: 15px; align-items: flex-start;">
+                    <i class="fas fa-balance-scale" style="color: var(--accent-primary); font-size: 24px;"></i>
+                    <div>
+                        <h4 style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px;">নির্ভুলতা ও নির্ভরযোগ্যতা</h4>
+                        <p style="color: var(--text-muted); line-height: 1.7;">
+                            ভাড়া ক্যালকুলেটর BRTA অনুমোদিত ভাড়া চার্ট অনুসরণ করে। ডেটাবেসে সংরক্ষিত প্রতিটি ভাড়া সরকারি নথি যাচাই করে সংযোজন করা হয়েছে। নিয়মিত আপডেটের মাধ্যমে ভাড়ার নির্ভুলতা নিশ্চিত করা হয়। ছাত্র ভাড়ার ক্ষেত্রে BRTA নির্দেশিকা কঠোরভাবে অনুসরণ করা হয়।
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="saferidebd_removebg_main.png" alt="SafeRideBD Logo">
+                <div class="footer-logo-text">SafeRideBD</div>
+                <p class="footer-tagline">ঢাকায় নিরাপদ ও সাশ্রয়ী মূল্যের পাবলিক পরিবহনের জন্য আপনার বিশ্বস্ত সঙ্গী। নির্ভরযোগ্য ভাড়া, নিরাপদ যাত্রা।</p>
+            </div>
+            
+            <div class="footer-links">
+                <a href="index.php" class="footer-link">
+                    <i class="fas fa-home"></i> হোম
+                </a>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-info-circle"></i> আমাদের সম্পর্কে
+                </a>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-phone"></i> যোগাযোগ
+                </a>
+                <a href="archive.html" class="footer-link">
+                    <i class="fas fa-shield-alt"></i> আর্কাইভস
+                </a>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-lock"></i> গোপনীয়তা নীতি
+                </a>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <i class="far fa-copyright"></i> 2026 SafeRideBD - সর্বস্বত্ব সংরক্ষিত
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link" title="ফেসবুক">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" title="টুইটার">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" title="ইন্সটাগ্রাম">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" title="ইমেইল">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="emergency-note">
+                <i class="fas fa-exclamation-triangle"></i>
+                জরুরি প্রয়োজনে নেভিগেশন বারের জরুরী সেবা ব্যবহার করুন
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
